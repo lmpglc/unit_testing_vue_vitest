@@ -1,49 +1,65 @@
 <template>
-  <h1>{{ msg }}</h1>
+  <TitleComponent 
+    v-show="msg"
+    :value="prefixedMessage" 
+    @on-mounted="handleTitleMounted"
+  />
 
-  <div class="card">
+  <div class="card" :class="{ 'card-success': !msg}"
+    @click="handleCardClick"
+  >
     <button type="button" @click="increment">count is {{ count }}</button>
-    <p>
-      Edit
-      <code>components/HelloWorld.vue</code> to test HMR
-    </p>
+
   </div>
 
-  <p>
-    Check out
-    <a href="https://vuejs.org/guide/quick-start.html#local" target="_blank"
-      >create-vue</a
-    >, the official Vue + Vite starter
-  </p>
-  <p>
-    Install
-    <a href="https://github.com/vuejs/language-tools" target="_blank">Volar</a>
-    in your IDE for a better DX
-  </p>
-  <p class="read-the-docs">Click on the Vite and Vue logos to learn more</p>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import axios from 'axios'
-const props = defineProps({ 
-  msg: String,
-  otra: String
-})
+import { ref, watch, computed } from 'vue'
+// import axios from 'axios'
+import { useAppStore } from '../stores/appStore';
+import TitleComponent from './TitleComponent.vue';
+import { HelloWorldEmits, HelloWorldProps } from '../models/helloWorld'
+ 
+
+
+const props = defineProps<HelloWorldProps>()
+const emit = defineEmits<HelloWorldEmits>()
 
 const count = ref(0)
 
+const handleCardClick = () => {
+  emit('card-clicked')
+} 
+
+const handleTitleMounted = () => {
+  emit('up', count.value)
+}
+
 const increment = () => {
   count.value++
+  console.log(props.msg
+  )
 }
+
+const prefixedMessage = computed(() => `My Title: ${props.msg}`)
+
+const { changeMessage } = useAppStore()
 
 watch(
   ()=>props.msg, 
   (value) => {
-    console.log('estamos en el test')
+    /*
+    // testeamos un fetch    
     fetch('https://example.com/' + value)
-    console.log('estamos en el test AXIOS')
+    // testeamos el get de axios
     axios.get('https://httpbin.org/get')
+    */
+    // testeamos un dispatch de pinia
+    if(!value){
+      return
+    }
+    changeMessage(value)
   },
 )
 

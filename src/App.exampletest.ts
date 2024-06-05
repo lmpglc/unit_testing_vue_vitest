@@ -6,7 +6,7 @@ describe('App.vue', () => {
     it('should render the msg property', () => {
         const instance = mount(App)
         
-        console.log(instance.html())
+        // console.log(instance.html())
 
         expect(instance.html()).toContain("official Vue")
     })
